@@ -1,0 +1,59 @@
+import parque.*
+import criaturas.*
+
+
+describe "Colonias y Areas" {
+
+    var coloniaDefensora
+    var coloniaAtacante
+    var claro
+    var castillo
+
+    method initialize() {
+        coloniaDefensora = new Colonia()
+        coloniaAtacante = new Colonia()
+
+        claro = new Claro(colonia = coloniaAtacante)
+        castillo = new Castillo(colonia = coloniaDefensora)
+
+        const hada1 = new Hada(poderMagico = 20, astucia = 60, rol = hechizero)
+        const hada2 = new Hada(poderMagico = 30, astucia = 20, rol = hechizero)
+
+        coloniaDefensora.habitantes().add(hada1)
+        coloniaDefensora.habitantes().add(hada2)
+    }
+
+    test "El poder defensivo de un claro es 100 mas el poder ofensivo de su colonia" {
+        assert.equals(
+            coloniaDefensora.poderOfensivo() + 100,
+            claro.poderDefensivo()
+        )
+    }
+
+    test "El castillo tiene 200 puntos por cada habitante formidable" {
+        assert.equals(
+            coloniaDefensora.cantHabitantesFormidables() * 200,
+            castillo.poderDefensivo()
+        )
+    }
+
+    test "Una colonia fuerte conquista un claro" {
+        const duende = new Duende(poderMagico = 100, astucia = 3, rol = hechizero)
+
+        coloniaAtacante.habitantes().add(duende)
+
+        coloniaAtacante.intentarConquistar(claro)
+
+        assert.equals(coloniaAtacante, claro.colonia())
+    }
+
+    test "Una colonia debil pierde poder magico al fracasar la conquista" {
+        const duendeDebil = new Duende(poderMagico = 100, astucia = 1, rol = hechizero)
+
+        coloniaAtacante.habitantes().add(duendeDebil)
+
+        coloniaAtacante.intentarConquistar(castillo)
+
+        assert.equals(8.5, duendeDebil.poderMagico())
+    }
+}
